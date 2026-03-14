@@ -44,12 +44,18 @@ enum BookingType {
   OTHER
 }
 
+enum DayStatus {
+  PLANNED
+  ACTIVE
+  DONE
+}
+
 // ─────────────────────────────────────────────
 // User
 // ─────────────────────────────────────────────
 
 model User {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String   // bcrypt-Hash
   name      String
@@ -69,7 +75,7 @@ model User {
 // ─────────────────────────────────────────────
 
 model Trip {
-  id          String     @id @default(cuid())
+  id          String     @id @default(uuid())
   ownerId     String
   title       String
   description String?
@@ -94,7 +100,7 @@ model Trip {
 // ─────────────────────────────────────────────
 
 model Stage {
-  id          String     @id @default(cuid())
+  id          String     @id @default(uuid())
   tripId      String
   title       String
   description String?
@@ -117,12 +123,14 @@ model Stage {
 // ─────────────────────────────────────────────
 
 model Day {
-  id         String     @id @default(cuid())
+  id         String     @id @default(uuid())
   tripId     String
   stageId    String?    // optional — Tag ohne Etappe erlaubt
   date       DateTime   @db.Date
   title      String?
   summary    String?
+  status     DayStatus  @default(PLANNED)
+  position   Int?       // optionale Reihenfolge innerhalb einer Stage
   visibility Visibility @default(PRIVATE)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
@@ -146,7 +154,7 @@ model Day {
 // ─────────────────────────────────────────────
 
 model Note {
-  id         String     @id @default(cuid())
+  id         String     @id @default(uuid())
   dayId      String
   content    String
   visibility Visibility @default(PRIVATE)
@@ -163,7 +171,7 @@ model Note {
 // ─────────────────────────────────────────────
 
 model Media {
-  id           String     @id @default(cuid())
+  id           String     @id @default(uuid())
   type         MediaType
   filename     String     // Originalname
   storageKey   String     // interner Schlüssel / Pfad im Storage-System
@@ -193,7 +201,7 @@ model Media {
 // ─────────────────────────────────────────────
 
 model Location {
-  id         String     @id @default(cuid())
+  id         String     @id @default(uuid())
   dayId      String
   label      String
   mapsUrl    String?
@@ -213,7 +221,7 @@ model Location {
 // ─────────────────────────────────────────────
 
 model Booking {
-  id          String      @id @default(cuid())
+  id          String      @id @default(uuid())
   tripId      String
   dayId       String?     // optional — Buchung einem Tag zuordnen
   title       String
@@ -238,7 +246,7 @@ model Booking {
 // ─────────────────────────────────────────────
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   dayId     String
   authorId  String
   content   String

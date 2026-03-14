@@ -25,7 +25,19 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
-## [2026-03-14] AP-05 — CRUD-Routen Trip, Stage, Day
+## [2026-03-14] AP-05 (rev2) — CRUD Trip/Stage/Day, UUID, flat routes, pagination
+
+**Änderungen gegenüber rev1:**
+- Alle IDs: `cuid()` → `uuid()` (sicherer für öffentliche URLs, kein Sequenz-Leak)
+- Routen: nested → flat (`/stages?tripId=`, `/days?tripId=`)
+- `Day`: `status` (PLANNED/ACTIVE/DONE) und `position` (Int?) ergänzt
+- Pagination auf allen List-Endpunkten: `limit`/`offset` + `total` in Response
+- `status`-Filter auf GET /days ergänzt
+- `shared/types`: `DayStatus`, `DaySummary.status`, `DaySummary.position`
+
+---
+
+## [2026-03-14] AP-05 (rev1) — CRUD-Routen Trip, Stage, Day (ersetzt)
 
 **Erledigt:**
 - `routes/trips.ts`: GET/POST /trips, GET/PATCH/DELETE /trips/:id

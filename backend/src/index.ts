@@ -36,9 +36,9 @@ app.use('*', authenticate)
 // ─── Routen ──────────────────────────────────────────────────────────────────
 
 app.route('/auth', authRoutes)
-app.route('/trips', tripRoutes)   // /trips, /trips/:id
-app.route('/trips', stageRoutes)  // /trips/:tripId/stages/*
-app.route('/trips', dayRoutes)    // /trips/:tripId/days/*
+app.route('/trips',  tripRoutes)   // GET|POST /trips, GET|PATCH|DELETE /trips/:id
+app.route('/stages', stageRoutes)  // GET|POST /stages, GET|PATCH|DELETE /stages/:id
+app.route('/days',   dayRoutes)    // GET|POST /days,   GET|PATCH|DELETE /days/:id
 
 app.get('/', (c) => c.json({ status: 'ok', version: '0.1.0' }))
 

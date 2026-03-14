@@ -8,6 +8,8 @@ export type MediaType = 'IMAGE' | 'PDF' | 'GPX' | 'VIDEO_REF' | 'DOCUMENT';
 
 export type BookingType = 'FLIGHT' | 'HOTEL' | 'TRANSPORT' | 'OTHER';
 
+export type DayStatus = 'PLANNED' | 'ACTIVE' | 'DONE';
+
 // API-Typen (Responses)
 // Sichtbarkeitslogik (canView, visibilityFilter) liegt im Backend: backend/src/lib/visibility.ts
 
@@ -41,7 +43,9 @@ export interface DaySummary {
   date: string;
   title?: string;
   summary?: string;
+  status: DayStatus;
   stageId?: string;
+  position?: number;
   visibility: Visibility;
   mediaCount: number;
 }

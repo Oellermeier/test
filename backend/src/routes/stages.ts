@@ -9,6 +9,7 @@ import type { HonoEnv } from '../index.js'
 const visibilityEnum = z.enum(['PRIVATE', 'FAMILY_CORE', 'FAMILY_EXTENDED', 'PUBLIC'])
 
 const createSchema = z.object({
+  tripId:      z.string().uuid(),
   title:       z.string().min(1).max(200),
   description: z.string().optional(),
   order:       z.number().int().min(0).default(0),
@@ -17,57 +18,68 @@ const createSchema = z.object({
   visibility:  visibilityEnum.default('PRIVATE'),
 })
 
-const updateSchema = createSchema.partial()
+const updateSchema = createSchema.omit({ tripId: true }).partial()
+
+const listQuery = z.object({
+  tripId: z.string().uuid(),
+  limit:  z.coerce.number().int().min(1).max(100).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+})
 
 export const stageRoutes = new Hono<HonoEnv>()
 
-// GET /trips/:tripId/stages
-stageRoutes.get('/:tripId/stages', async (c) => {
+// GET /stages?tripId=
+stageRoutes.get('/', zValidator('query', listQuery), async (c) => {
   const allowed = visibilityFilter(c.var.user?.role)
-  const tripId = c.req.param('tripId')
+  const { tripId, limit, offset } = c.req.valid('query')
 
+  // Sicherstellen, dass der Trip für den Nutzer sichtbar ist
   const trip = await db.trip.findFirst({
     where: { id: tripId, visibility: { in: allowed } },
     select: { id: true },
   })
-  if (!trip) return c.json({ error: 'Nicht gefunden' }, 404)
+  if (!trip) return c.json({ error: 'Trip nicht gefunden' }, 404)
 
-  const stages = await db.stage.findMany({
-    where: { tripId, visibility: { in: allowed } },
-    orderBy: { order: 'asc' },
-    select: {
-      id: true, title: true, description: true,
-      order: true, startDate: true, endDate: true, visibility: true,
-      _count: { select: { days: true } },
-    },
-  })
-  return c.json(stages)
+  const [items, total] = await Promise.all([
+    db.stage.findMany({
+      where: { tripId, visibility: { in: allowed } },
+      orderBy: { order: 'asc' },
+      take: limit,
+      skip: offset,
+      select: {
+        id: true, title: true, description: true,
+        order: true, startDate: true, endDate: true, visibility: true,
+        _count: { select: { days: true } },
+      },
+    }),
+    db.stage.count({ where: { tripId, visibility: { in: allowed } } }),
+  ])
+  return c.json({ items, total, limit, offset })
 })
 
-// POST /trips/:tripId/stages
-stageRoutes.post('/:tripId/stages', requireOwner, zValidator('json', createSchema), async (c) => {
-  const tripId = c.req.param('tripId')
+// POST /stages
+stageRoutes.post('/', requireOwner, zValidator('json', createSchema), async (c) => {
+  const { tripId, ...data } = c.req.valid('json')
   const trip = await db.trip.findUnique({ where: { id: tripId }, select: { ownerId: true } })
-  if (!trip) return c.json({ error: 'Nicht gefunden' }, 404)
+  if (!trip) return c.json({ error: 'Trip nicht gefunden' }, 404)
   if (trip.ownerId !== c.var.user!.id) return c.json({ error: 'Kein Zugriff' }, 403)
 
-  const stage = await db.stage.create({ data: { ...c.req.valid('json'), tripId } })
+  const stage = await db.stage.create({ data: { ...data, tripId } })
   return c.json(stage, 201)
 })
 
-// GET /trips/:tripId/stages/:id
-stageRoutes.get('/:tripId/stages/:id', async (c) => {
+// GET /stages/:id
+stageRoutes.get('/:id', async (c) => {
   const allowed = visibilityFilter(c.var.user?.role)
-  const { tripId, id } = c.req.param()
-
   const stage = await db.stage.findFirst({
-    where: { id, tripId, visibility: { in: allowed } },
+    where: { id: c.req.param('id'), visibility: { in: allowed } },
     include: {
       days: {
         where: { visibility: { in: allowed } },
-        orderBy: { date: 'asc' },
+        orderBy: [{ position: 'asc' }, { date: 'asc' }],
         select: {
-          id: true, date: true, title: true, summary: true, visibility: true,
+          id: true, date: true, title: true, summary: true,
+          status: true, position: true, visibility: true,
           _count: { select: { media: true, notes: true } },
         },
       },
@@ -77,30 +89,28 @@ stageRoutes.get('/:tripId/stages/:id', async (c) => {
   return c.json(stage)
 })
 
-// PATCH /trips/:tripId/stages/:id
-stageRoutes.patch('/:tripId/stages/:id', requireOwner, zValidator('json', updateSchema), async (c) => {
-  const { tripId, id } = c.req.param()
+// PATCH /stages/:id
+stageRoutes.patch('/:id', requireOwner, zValidator('json', updateSchema), async (c) => {
   const stage = await db.stage.findFirst({
-    where: { id, tripId },
+    where: { id: c.req.param('id') },
     include: { trip: { select: { ownerId: true } } },
   })
   if (!stage) return c.json({ error: 'Nicht gefunden' }, 404)
   if (stage.trip.ownerId !== c.var.user!.id) return c.json({ error: 'Kein Zugriff' }, 403)
 
-  const updated = await db.stage.update({ where: { id }, data: c.req.valid('json') })
+  const updated = await db.stage.update({ where: { id: c.req.param('id') }, data: c.req.valid('json') })
   return c.json(updated)
 })
 
-// DELETE /trips/:tripId/stages/:id
-stageRoutes.delete('/:tripId/stages/:id', requireOwner, async (c) => {
-  const { tripId, id } = c.req.param()
+// DELETE /stages/:id
+stageRoutes.delete('/:id', requireOwner, async (c) => {
   const stage = await db.stage.findFirst({
-    where: { id, tripId },
+    where: { id: c.req.param('id') },
     include: { trip: { select: { ownerId: true } } },
   })
   if (!stage) return c.json({ error: 'Nicht gefunden' }, 404)
   if (stage.trip.ownerId !== c.var.user!.id) return c.json({ error: 'Kein Zugriff' }, 403)
 
-  await db.stage.delete({ where: { id } })
+  await db.stage.delete({ where: { id: c.req.param('id') } })
   return c.body(null, 204)
 })

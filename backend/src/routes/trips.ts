@@ -18,21 +18,33 @@ const createSchema = z.object({
 
 const updateSchema = createSchema.partial()
 
+const listQuery = z.object({
+  limit:  z.coerce.number().int().min(1).max(100).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+})
+
 export const tripRoutes = new Hono<HonoEnv>()
 
 // GET /trips
-tripRoutes.get('/', async (c) => {
+tripRoutes.get('/', zValidator('query', listQuery), async (c) => {
   const allowed = visibilityFilter(c.var.user?.role)
-  const trips = await db.trip.findMany({
-    where: { visibility: { in: allowed } },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true, title: true, description: true,
-      startDate: true, endDate: true, visibility: true, createdAt: true,
-      _count: { select: { days: true, stages: true } },
-    },
-  })
-  return c.json(trips)
+  const { limit, offset } = c.req.valid('query')
+
+  const [items, total] = await Promise.all([
+    db.trip.findMany({
+      where: { visibility: { in: allowed } },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset,
+      select: {
+        id: true, title: true, description: true,
+        startDate: true, endDate: true, visibility: true, createdAt: true,
+        _count: { select: { days: true, stages: true } },
+      },
+    }),
+    db.trip.count({ where: { visibility: { in: allowed } } }),
+  ])
+  return c.json({ items, total, limit, offset })
 })
 
 // POST /trips
@@ -52,13 +64,14 @@ tripRoutes.get('/:id', async (c) => {
       stages: {
         where: { visibility: { in: allowed } },
         orderBy: { order: 'asc' },
+        select: { id: true, title: true, order: true, startDate: true, endDate: true, visibility: true },
       },
       days: {
         where: { visibility: { in: allowed } },
         orderBy: { date: 'asc' },
         select: {
           id: true, date: true, title: true, summary: true,
-          stageId: true, visibility: true,
+          status: true, stageId: true, position: true, visibility: true,
           _count: { select: { media: true, notes: true } },
         },
       },

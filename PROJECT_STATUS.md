@@ -14,7 +14,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-02 | Tech-Stack-Entscheidung (ADR-001) | ✅ Erledigt |
 | AP-03 | Datenbankschema (Prisma) | ✅ Erledigt |
 | AP-04 | Backend: Auth + Visibility-Middleware | ✅ Erledigt |
-| AP-05 | Backend: Reise/Etappen/Tages-API (CRUD) | ✅ Erledigt |
+| AP-05 | Backend: CRUD Trip/Stage/Day (UUID, flat routes, pagination) | ✅ Erledigt |
 | AP-06 | Backend: Upload-API (Bild, PDF, GPX) | 🔜 Offen |
 | AP-07 | Frontend-App: Grundgerüst + Navigation | 🔜 Offen |
 | AP-08 | Frontend-App: Reiseübersicht + Tagesansicht | 🔜 Offen |
