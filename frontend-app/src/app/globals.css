@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Safe-area-Unterstützung für iPhone (Notch, Home Indicator) */
+:root {
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  -webkit-tap-highlight-color: transparent; /* Kein blaues Flash bei Tap auf iOS */
+  overscroll-behavior: none;                /* Kein Bounce-Scroll auf App-Ebene */
+}
+
+/* Mindest-Tap-Größe für alle interaktiven Elemente */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}

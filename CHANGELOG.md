@@ -25,6 +25,28 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-07 — Frontend-App Grundgerüst
+
+**Neu (frontend-app/):**
+- `package.json`: Next.js 15, React 19, Tailwind v4, lucide-react
+- `next.config.ts`: Rewrite-Proxy `/api/*` → Backend (löst CORS + Cookie-Domain)
+- `public/manifest.json`: PWA-Manifest (standalone, theme-color, icon-refs)
+- `app/layout.tsx`: Root-HTML mit PWA-Meta, apple-web-app, viewport fit=cover
+- `app/page.tsx`: Redirect → /trips
+- `app/login/page.tsx`: Login-Form (Client Component, fetch → /api/auth/login)
+- `app/(app)/layout.tsx`: Auth-Guard (Server Component, Cookie → Backend-Check, OWNER only)
+- `app/(app)/trips|heute|upload|mehr`: Placeholder-Seiten
+- `app/(app)/mehr/page.tsx`: Logout-Funktion enthalten
+- `components/BottomNav.tsx`: Mobile Bottom-Nav mit lucide-react Icons, safe-area-inset
+- `globals.css`: Tailwind v4, tap-highlight, overscroll-behavior, min-tap-size 44px
+- `lib/api.ts`: Fetch-Wrapper für Client Components (ApiError, 204-Handling)
+- `.env.local.example`
+
+**AP-06 Nachschärfung:**
+- `.gitignore` (root): backend/uploads/ ausgeschlossen
+
+---
+
 ## [2026-03-14] AP-06 — Upload-API (Bild, PDF, GPX)
 
 **Neu:**

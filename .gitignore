@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+dist/
+out/
+build/
+
+# Environment files
+.env
+.env.local
+.env*.local
+!.env.example
+!.env.local.example
+
+# Uploads (lokaler Medienspeicher — nicht ins Repo)
+backend/uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Prisma
+backend/prisma/migrations/*.sql

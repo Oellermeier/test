@@ -16,7 +16,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-04 | Backend: Auth + Visibility-Middleware | ✅ Erledigt |
 | AP-05 | Backend: CRUD Trip/Stage/Day (UUID, flat routes, pagination) | ✅ Erledigt |
 | AP-06 | Backend: Upload-API (Bild, PDF, GPX) | ✅ Erledigt |
-| AP-07 | Frontend-App: Grundgerüst + Navigation | 🔜 Offen |
+| AP-07 | Frontend-App: Grundgerüst + Navigation | ✅ Erledigt |
 | AP-08 | Frontend-App: Reiseübersicht + Tagesansicht | 🔜 Offen |
 | AP-09 | Frontend-App: Upload-Flows | 🔜 Offen |
 | AP-10 | Frontend-App: Freigabe-Steuerung + PWA/Offline | 🔜 Offen |
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-07: Frontend-App Grundgerüst (Next.js, PWA-Basis, Navigation)
+AP-08: Frontend-App Reiseübersicht + Tagesansicht (erste echte Datenanbindung)
