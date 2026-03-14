@@ -1,0 +1,16 @@
+# Lokale Entwicklung: nur die Datenbank als Container.
+# Alle drei Services laufen nativ via `npm run dev:all`.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER:     travel
+      POSTGRES_PASSWORD: dev_changeme
+      POSTGRES_DB:       traveldb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

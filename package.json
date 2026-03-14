@@ -1,0 +1,17 @@
+{
+  "name": "travel-project",
+  "private": true,
+  "scripts": {
+    "dev:backend":   "npm --prefix backend run dev",
+    "dev:app":       "npm --prefix frontend-app run dev",
+    "dev:site":      "npm --prefix frontend-site run dev",
+    "dev:all":       "concurrently -n backend,app,site -c blue,green,yellow \"npm run dev:backend\" \"npm run dev:app\" \"npm run dev:site\"",
+    "install:all":   "npm --prefix backend install && npm --prefix frontend-app install && npm --prefix frontend-site install",
+    "db:migrate":    "npm --prefix backend run db:migrate",
+    "db:seed":       "npm --prefix backend run db:seed",
+    "db:studio":     "npm --prefix backend run db:studio"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
