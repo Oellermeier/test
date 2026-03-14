@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import TripCard from '@/components/TripCard.astro'
+import { apiFetch } from '@/lib/api'
+import type { TripListItem, PaginatedResponse } from '@/types/api'
+
+const data = await apiFetch<PaginatedResponse<TripListItem>>('/trips?limit=50&offset=0')
+const trips = data?.items ?? []
+---
+
+<BaseLayout title="Reisen" description="Alle veröffentlichten Reisen">
+
+  <!-- Hero -->
+  <div class="mb-10 border-b border-stone-200 pb-8">
+    <h1 class="text-4xl font-bold tracking-tight mb-2">Reisen</h1>
+    <p class="text-stone-500 font-sans text-base">
+      Berichte, Orte und Erinnerungen von unterwegs.
+    </p>
+  </div>
+
+  <!-- Trip Grid -->
+  {trips.length > 0 ? (
+    <div class="grid gap-6 sm:grid-cols-2">
+      {trips.map(trip => <TripCard trip={trip} />)}
+    </div>
+  ) : (
+    <div class="text-center py-20 text-stone-400 font-sans">
+      <svg class="w-12 h-12 mx-auto mb-4 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4m0 4h.01" stroke-linecap="round"/>
+      </svg>
+      <p class="text-lg font-medium text-stone-500">Noch keine Reisen veröffentlicht</p>
+      <p class="text-sm mt-1">Schau bald wieder vorbei.</p>
+    </div>
+  )}
+
+</BaseLayout>

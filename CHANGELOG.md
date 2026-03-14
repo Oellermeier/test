@@ -25,6 +25,30 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-11 — Frontend-Site: Grundgerüst + Reiseübersicht (Astro)
+
+**Neu (frontend-site/):**
+- `package.json`: Astro 5, `@astrojs/node` (SSR standalone), `@astrojs/tailwind`, Tailwind v3
+- `astro.config.mjs`: `output: 'server'`, Node-Adapter, Tailwind-Integration
+- `tsconfig.json`: strict + `@/*`-Alias
+- `.env.example`: `API_URL`-Konfiguration
+- `src/lib/api.ts`: `apiFetch()` — server-side fetch, kein Cookie-Forwarding (nur PUBLIC)
+- `src/lib/format.ts`: `formatDateLong()` + `formatDateRange()` in Deutsch
+- `src/types/api.ts`: `TripListItem`, `PaginatedResponse<T>`
+- `src/layouts/BaseLayout.astro`: Magazin-Layout (serif, stone-Palette, sticky Header, Footer)
+- `src/components/TripCard.astro`: Magazin-Karte (Cover-Bild oder Platzhalter, Datum, Titel, Beschreibung, Tage-Count)
+- `src/pages/index.astro`: Redirect → /reisen
+- `src/pages/reisen/index.astro`: Reiseübersicht mit echten Backend-Daten, Empty State
+- `public/favicon.svg`: amber-brauner Platzhalter
+
+**Entscheidungen:**
+- SSR (kein SSG) — Inhalte können sich ändern, kein Build-Trigger nötig
+- Kein komplexes Auth-UI — nur PUBLIC-Daten; Family-Zugang kommt in AP-12
+- Tailwind v3 statt v4 — `@astrojs/tailwind` unterstützt noch kein v4 ohne Konfigurationsaufwand
+- Magazin-Ästhetik: Serif-Schrift, stone/amber-Palette, großzügige Whitespace-Nutzung — deutlich anders als die App
+
+---
+
 ## [2026-03-14] AP-10 — Freigabe-Steuerung + PWA/Offline-Basis
 
 **Freigabe (Day Visibility):**
