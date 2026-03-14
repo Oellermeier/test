@@ -69,9 +69,14 @@ export interface Note {
 export interface Media {
   id: string;
   type: MediaType;
-  filename: string;
-  storageUrl: string;
+  filename: string;       // Originalname zur Anzeige
+  storageKey: string;     // interner Pfad (nur für Backend/Admin relevant)
+  storageUrl: string;     // HTTP-Pfad zum Abrufen
   thumbnailUrl?: string;
+  mimeType: string;
+  size?: number;          // Bytes
+  tripId: string;
+  dayId?: string;
   visibility: Visibility;
   order?: number;
   createdAt: string;

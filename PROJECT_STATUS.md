@@ -15,7 +15,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-03 | Datenbankschema (Prisma) | ✅ Erledigt |
 | AP-04 | Backend: Auth + Visibility-Middleware | ✅ Erledigt |
 | AP-05 | Backend: CRUD Trip/Stage/Day (UUID, flat routes, pagination) | ✅ Erledigt |
-| AP-06 | Backend: Upload-API (Bild, PDF, GPX) | 🔜 Offen |
+| AP-06 | Backend: Upload-API (Bild, PDF, GPX) | ✅ Erledigt |
 | AP-07 | Frontend-App: Grundgerüst + Navigation | 🔜 Offen |
 | AP-08 | Frontend-App: Reiseübersicht + Tagesansicht | 🔜 Offen |
 | AP-09 | Frontend-App: Upload-Flows | 🔜 Offen |
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-06: Upload-API (Bild, PDF, GPX) + lokale Storage-Implementierung
+AP-07: Frontend-App Grundgerüst (Next.js, PWA-Basis, Navigation)

@@ -25,6 +25,23 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-06 — Upload-API (Bild, PDF, GPX)
+
+**Neu:**
+- `lib/storage.ts`: `saveFile()` + `removeFile()` — lokal, UUID-basierte Dateinamen
+- `routes/uploads.ts`: POST /uploads/images|documents|gpx, DELETE /uploads/:id
+- Gemeinsamer `handleUpload()` mit CONFIGS-Objekt je Typ (kein Duplikat-Code)
+- Validierung: MIME-Whitelist, Maximalgröße, Trip-Ownership, Day-Zugehörigkeit
+- `index.ts`: uploadRoutes gemountet + `serveStatic` für `/uploads/*`
+
+**Limits:** Images 20 MB, Dokumente 50 MB, GPX 10 MB
+
+**Kleine Nachschärfungen:**
+- `shared/types`: Media-Interface vollständig (storageKey, mimeType, size, tripId, dayId)
+- `docs/architecture.md`: Upload-Strategie + Date-Handling dokumentiert
+
+---
+
 ## [2026-03-14] AP-05 (rev2) — CRUD Trip/Stage/Day, UUID, flat routes, pagination
 
 **Änderungen gegenüber rev1:**

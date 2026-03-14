@@ -65,6 +65,23 @@ Docker Compose (lokal / VPS):
 - Auth via JWT (HTTP-only Cookie)
 - Medien-Upload via Multipart Form Data
 
+## Upload-Strategie (MVP)
+
+Lokale Speicherung unter `./uploads/{images,documents,gpx}/`.
+- Dateiname im Storage: UUID + bereinigte Extension (kein Nutzer-Input im Pfad)
+- Originalname in DB gespeichert (nur zur Anzeige)
+- Auslieferung Dev: Node.js `serveStatic`; Prod: nginx direkt (kein Node.js-Overhead)
+- Zukünftige Migration zu R2/S3: `saveFile()` + `removeFile()` in `lib/storage.ts` austauschen
+
+Limits: Images 20 MB, Dokumente/PDFs 50 MB, GPX 10 MB.
+
+## Date-Handling
+
+`Day.date` wird als `YYYY-MM-DD` string vom Frontend gesendet und als `new Date(date)`
+(UTC Midnight) in PostgreSQL `@db.Date` gespeichert. Frontends müssen konsistent
+UTC-Dates senden (kein lokales Timezone-Offset). Für Reisedaten ohne Uhrzeitanteil ist
+das unkritisch.
+
 ## Sicherheit
 
 - Visibility-Check auf **jedem** API-Endpunkt
