@@ -4,7 +4,7 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Aktueller Stand
 
-**Phase:** AP-11 abgeschlossen — Frontend-Site Grundgerüst (Astro)
+**Phase:** AP-12 abgeschlossen — Frontend-Site Tagesdetail + Galerie + Family-Auth
 
 ## Arbeitspakete
 
@@ -21,7 +21,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-09 | Frontend-App: Upload-UI (Bild, PDF, GPX) | ✅ Erledigt |
 | AP-10 | Frontend-App: Freigabe-Steuerung + PWA/Offline | ✅ Erledigt |
 | AP-11 | Frontend-Site: Grundgerüst + Reiseübersicht | ✅ Erledigt |
-| AP-12 | Frontend-Site: Tagesdetail + Galerie + Kommentare | 🔜 Offen |
+| AP-12 | Frontend-Site: Tagesdetail + Galerie + Family-Auth | ✅ Erledigt |
 | AP-13 | Integrations-Test + Review | 🔜 Offen |
 
 ## Bekannte Risiken
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-12: Frontend-Site — Tagesdetail + Galerie + Kommentare
+AP-13: Integrations-Test + Review

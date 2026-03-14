@@ -25,6 +25,28 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-12 — Frontend-Site: Tagesdetail + Galerie + Family-Auth
+
+**Neu/geändert (frontend-site/):**
+- `src/types/api.ts`: StageItem, DayListItem, TripDetail, MediaItem, NoteItem, LocationItem, DayDetail
+- `src/lib/api.ts`: `apiFetch()` akzeptiert optionale `extraHeaders`; `API_URL` exportiert
+- `src/lib/viewer-auth.ts`: `familyHeaders()` + `isFamilyMember()` — liest `family_ok`-Cookie, gibt `travel_token`-Header zurück
+- `src/lib/media.ts`: `mediaUrl()` — stellt API_URL voran (relative Backend-Pfade)
+- `src/pages/reisen/[id]/index.astro`: Reisedetailseite — Etappen-Chips, chronologische Tagesliste mit Zusammenfassung
+- `src/pages/reisen/[id]/tage/[dayId]/index.astro`: Tagesdetail im Tagebuch-Stil — Notizen, Bildgalerie, Orte (Maps-Link), Dateiblock, Breadcrumb, Zurück-Navigation
+- `src/components/MediaGallery.astro`: Bildgitter (1/2/3-spaltig je Anzahl), klickbar auf Vollbild
+- `src/pages/familie/index.astro`: Familienbereich — SSR-Formular-Handling, Login setzt httpOnly-Cookie, Logout löscht Cookie, kein JS nötig
+- `src/layouts/BaseLayout.astro`: „Familie"-Link in Nav ergänzt
+- `.env.example`: FAMILY_PASSWORD + FAMILY_JWT dokumentiert
+
+**Entscheidungen:**
+- Family-Auth ohne neuen Backend-Endpoint: FAMILY_JWT = einmalig generierter FAMILY_EXTENDED-Token im .env der Site — Backend-Visibilitätsfilter läuft unverändert
+- Kein Client-JS für die gesamte Family-Auth — reines SSR-Formular
+- Dokumente/GPX als Links statt iframe — minimalistisch, funktional
+- Kein Lightbox-Framework — verlinktes Vollbild reicht für MVP
+
+---
+
 ## [2026-03-14] AP-11 — Frontend-Site: Grundgerüst + Reiseübersicht (Astro)
 
 **Neu (frontend-site/):**
