@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-travel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-traveldb}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-travel}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-traveldb}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      STORAGE_PATH: /app/uploads
+    volumes:
+      - media_uploads:/app/uploads
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  frontend-app:
+    build:
+      context: ../frontend-app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:3000}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+
+  frontend-site:
+    build:
+      context: ../frontend-site
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:3000}
+    ports:
+      - "3002:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  media_uploads:
