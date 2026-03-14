@@ -45,7 +45,7 @@ export interface TripDetail extends TripListItem {
   days:   DayListItem[]
 }
 
-export type MediaType = 'IMAGE' | 'DOCUMENT' | 'GPX'
+export type MediaType = 'IMAGE' | 'PDF' | 'GPX' | 'DOCUMENT' | 'VIDEO_REF'
 
 export interface MediaItem {
   id:           string

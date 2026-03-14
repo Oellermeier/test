@@ -7,6 +7,15 @@ import { saveFile, removeFile } from '../lib/storage.js'
 import type { HonoEnv } from '../index.js'
 import type { MediaType } from '@prisma/client'
 
+// Minimale Magic-Byte-Prüfung — verhindert MIME-Spoofing für die häufigsten Typen.
+// HEIC, WebP, GPX/XML haben keine eindeutigen einfach prüfbaren Signaturen → übersprungen.
+function hasValidMagicBytes(buf: Buffer, mimeType: string): boolean {
+  if (mimeType === 'image/jpeg')      return buf[0] === 0xFF && buf[1] === 0xD8
+  if (mimeType === 'image/png')       return buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47
+  if (mimeType === 'application/pdf') return buf.slice(0, 4).toString('ascii') === '%PDF'
+  return true
+}
+
 // ── Konfiguration je Medientyp ────────────────────────────────────────────
 
 const CONFIGS = {
@@ -84,6 +93,11 @@ async function handleUpload(
   }
 
   const buffer = Buffer.from(await file.arrayBuffer())
+
+  if (!hasValidMagicBytes(buffer, file.type)) {
+    return c.json({ error: 'Dateiinhalt stimmt nicht mit dem deklarierten Typ überein' }, 415)
+  }
+
   const { storageKey, storageUrl } = await saveFile(buffer, config.subdir, file.name)
 
   const media = await db.media.create({

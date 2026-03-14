@@ -25,6 +25,33 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-13 — Integrations-Review + Härtung (MVP-Abschluss)
+
+**Fixes:**
+- `frontend-site/src/types/api.ts`: `MediaType` auf Prisma-Enum korrigiert (`PDF` statt `DOCUMENT`)
+  → PDFs wurden in der Viewer-Site nie angezeigt (stiller Bug)
+- `frontend-site/src/pages/reisen/[id]/tage/[dayId]/index.astro`: `/api/media-proxy`-Placeholder durch direktes `mediaUrl(doc.storageUrl)` ersetzt; `mediaUrl`-Import ergänzt; PDF-Filter korrigiert
+- `frontend-site/.env.example`: Port `3001` → `3000` korrigiert
+- `backend/.env.example`: `OWNER_EMAIL` + `OWNER_PASSWORD` ergänzt (für `npm run db:seed`)
+- `frontend-app/public/sw.js`: Cache-Versions-Kommentar ergänzt (Deploy-Erinnerung)
+
+**Härtung:**
+- `backend/src/routes/uploads.ts`: Magic-Byte-Check für JPEG, PNG, PDF (verhindert MIME-Spoofing; HEIC/WebP/GPX übersprungen — keine eindeutige Signatur)
+
+**Family-Auth:**
+- `backend/src/scripts/generate-family-jwt.ts`: Script zum Erzeugen von `FAMILY_JWT` (365 Tage, FAMILY_EXTENDED)
+- `backend/package.json`: `family:jwt`-Script ergänzt (`cd backend && npm run family:jwt`)
+
+**Bewusst offengeblieben (MVP-Grenzen):**
+- `next/image` für Bild-Optimierung — Next.js-Standard; für MVP `<img>` ausreichend
+- Cloud-Storage-Migration (R2) — Abstraktion vorhanden (`storageKey`/`storageUrl`), Migration wenn nötig
+- Kommentarfunktion — bewusst nicht im MVP
+- Video-Upload — bewusst nicht im MVP
+- Background-Sync / Push Notifications — bewusst nicht im MVP
+- Magic Bytes für HEIC/WebP/GPX — technisch aufwendig, Risiko gering (Owner-only Upload)
+
+---
+
 ## [2026-03-14] AP-12 — Frontend-Site: Tagesdetail + Galerie + Family-Auth
 
 **Neu/geändert (frontend-site/):**

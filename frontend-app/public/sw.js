@@ -3,6 +3,7 @@
 // API-Calls und Uploads werden immer vom Netzwerk abgerufen (kein Cache).
 // Offline: zuletzt besuchte Seiten sind abrufbar.
 
+// Bei jedem Deployment hochzählen (v2, v3, …) — erzwingt Cache-Leerung beim nächsten Start.
 const CACHE_NAME = 'travel-app-v1'
 
 self.addEventListener('install', () => {

@@ -4,6 +4,7 @@ import MediaGallery from '@/components/MediaGallery.astro'
 import { apiFetch } from '@/lib/api'
 import { familyHeaders } from '@/lib/viewer-auth'
 import { formatDateLong } from '@/lib/format'
+import { mediaUrl } from '@/lib/media'
 import type { DayDetail, TripDetail } from '@/types/api'
 
 const { id, dayId } = Astro.params
@@ -17,7 +18,7 @@ const [day, trip] = await Promise.all([
 if (!day || !trip) return Astro.redirect(`/reisen/${id}`, 302)
 
 const images   = day.media.filter(m => m.type === 'IMAGE')
-const docs     = day.media.filter(m => m.type === 'DOCUMENT' || m.type === 'GPX')
+const docs     = day.media.filter(m => m.type === 'PDF' || m.type === 'GPX' || m.type === 'DOCUMENT')
 ---
 
 <BaseLayout title={day.title ?? formatDateLong(day.date)} description={day.summary ?? undefined}>
@@ -100,7 +101,7 @@ const docs     = day.media.filter(m => m.type === 'DOCUMENT' || m.type === 'GPX'
         {docs.map(doc => (
           <li>
             <a
-              href={`/api/media-proxy?url=${encodeURIComponent(doc.storageUrl)}`}
+              href={mediaUrl(doc.storageUrl)}
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-2 text-sm font-sans text-amber-800 hover:underline"

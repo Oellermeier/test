@@ -4,7 +4,7 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Aktueller Stand
 
-**Phase:** AP-12 abgeschlossen — Frontend-Site Tagesdetail + Galerie + Family-Auth
+**Phase:** AP-13 abgeschlossen — MVP vollständig
 
 ## Arbeitspakete
 
@@ -22,7 +22,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-10 | Frontend-App: Freigabe-Steuerung + PWA/Offline | ✅ Erledigt |
 | AP-11 | Frontend-Site: Grundgerüst + Reiseübersicht | ✅ Erledigt |
 | AP-12 | Frontend-Site: Tagesdetail + Galerie + Family-Auth | ✅ Erledigt |
-| AP-13 | Integrations-Test + Review | 🔜 Offen |
+| AP-13 | Integrations-Review + Härtung | ✅ Erledigt |
 
 ## Bekannte Risiken
 
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-13: Integrations-Test + Review
+MVP abgeschlossen. Nächste Schritte nach MVP: Kommentarfunktion, Cloud-Storage (R2), Deployment-Automatisierung, Next/Image-Optimierung.
