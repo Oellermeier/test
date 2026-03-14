@@ -12,8 +12,8 @@ Zuletzt aktualisiert: 2026-03-14
 |---|---|---|
 | AP-01 | Projektstruktur & Dokumentation | ✅ Erledigt |
 | AP-02 | Tech-Stack-Entscheidung (ADR-001) | ✅ Erledigt |
-| AP-03 | Datenbankschema (Prisma) | 🔜 Offen |
-| AP-04 | Backend: Auth + Visibility-Middleware | 🔜 Offen |
+| AP-03 | Datenbankschema (Prisma) | ✅ Erledigt |
+| AP-04 | Backend: Auth + Visibility-Middleware | ✅ Erledigt |
 | AP-05 | Backend: Reise/Etappen/Tages-API (CRUD) | 🔜 Offen |
 | AP-06 | Backend: Upload-API (Bild, PDF, GPX) | 🔜 Offen |
 | AP-07 | Frontend-App: Grundgerüst + Navigation | 🔜 Offen |
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-03: Prisma-Schema definieren (Reise, Etappe, Tag, Medien, Sichtbarkeit)
+AP-05: CRUD-Routen für Trip, Stage, Day (auf AP-04-Fundament aufsetzen)

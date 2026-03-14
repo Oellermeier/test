@@ -8,26 +8,8 @@ export type MediaType = 'IMAGE' | 'PDF' | 'GPX' | 'VIDEO_REF' | 'DOCUMENT';
 
 export type BookingType = 'FLIGHT' | 'HOTEL' | 'TRANSPORT' | 'OTHER';
 
-// Sichtbarkeits-Hierarchie (höherer Index = restriktiver)
-export const VISIBILITY_LEVELS: Record<Visibility, number> = {
-  PUBLIC: 0,
-  FAMILY_EXTENDED: 1,
-  FAMILY_CORE: 2,
-  PRIVATE: 3,
-};
-
-// Prüft ob ein Nutzer mit gegebener Rolle einen Inhalt mit gegebener Visibility sehen darf
-export function canView(userRole: UserRole, visibility: Visibility): boolean {
-  if (userRole === 'OWNER') return true;
-  switch (visibility) {
-    case 'PUBLIC': return true;
-    case 'FAMILY_EXTENDED': return userRole === 'FAMILY_CORE' || userRole === 'FAMILY_EXTENDED';
-    case 'FAMILY_CORE': return userRole === 'FAMILY_CORE';
-    case 'PRIVATE': return false;
-  }
-}
-
 // API-Typen (Responses)
+// Sichtbarkeitslogik (canView, visibilityFilter) liegt im Backend: backend/src/lib/visibility.ts
 
 export interface TripSummary {
   id: string;
