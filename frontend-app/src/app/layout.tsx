@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  width:               'device-width',
-  initialScale:        1,
-  maximumScale:        1,    // Kein Zoom — App-Feeling
-  viewportFit:         'cover', // Für iPhone Notch / Dynamic Island
-  themeColor:          '#2563eb',
+  width:        'device-width',
+  initialScale: 1,
+  // maximumScale bewusst nicht gesetzt → Nutzer-Zoom erlaubt (Accessibility)
+  viewportFit:  'cover', // iPhone Notch / Dynamic Island
+  themeColor:   '#2563eb',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

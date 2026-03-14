@@ -17,7 +17,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-05 | Backend: CRUD Trip/Stage/Day (UUID, flat routes, pagination) | ✅ Erledigt |
 | AP-06 | Backend: Upload-API (Bild, PDF, GPX) | ✅ Erledigt |
 | AP-07 | Frontend-App: Grundgerüst + Navigation | ✅ Erledigt |
-| AP-08 | Frontend-App: Reiseübersicht + Tagesansicht | 🔜 Offen |
+| AP-08 | Frontend-App: Reiseübersicht + Tagesansicht | ✅ Erledigt |
 | AP-09 | Frontend-App: Upload-Flows | 🔜 Offen |
 | AP-10 | Frontend-App: Freigabe-Steuerung + PWA/Offline | 🔜 Offen |
 | AP-11 | Frontend-Site: Grundgerüst + Reiseübersicht | 🔜 Offen |
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-08: Frontend-App Reiseübersicht + Tagesansicht (erste echte Datenanbindung)
+AP-09: Upload-UI in der Reisenden-App

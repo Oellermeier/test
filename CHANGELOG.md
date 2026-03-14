@@ -25,6 +25,24 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-08 — Reiseübersicht + Tagesansicht
+
+**Neu (frontend-app/):**
+- `lib/server-api.ts`: serverFetch() mit Cookie-Forwarding für Server Components
+- `lib/format.ts`: formatDate/ShortDate/DateRange/todayISO — kein Date-Library
+- `types/api.ts`: API-Response-Typen (TripListItem, TripDetail, DayListItem, DayDetail, …)
+- `components/trips/TripCard.tsx`: Reisekarte mit Datum, Beschreibung, Tage-Count
+- `components/days/DayCard.tsx`: Tag-Karte mit Datum, Status-Badge, Content-Count
+- `app/(app)/trips/page.tsx`: Reiseübersicht mit echten Daten + Empty State
+- `app/(app)/trips/[id]/page.tsx`: Reisedetail mit Etappen-Chips + Tagesliste
+- `app/(app)/trips/[id]/days/[dayId]/page.tsx`: Tagesdetail (Notizen, Orte, Buchungen, Medien)
+- `app/(app)/heute/page.tsx`: Aktiver Tag / nächster Tag mit Fallback
+
+**AP-07 Nachschärfung:**
+- `app/layout.tsx`: maximumScale entfernt (Nutzer-Zoom für Accessibility erlaubt)
+
+---
+
 ## [2026-03-14] AP-07 — Frontend-App Grundgerüst
 
 **Neu (frontend-app/):**
