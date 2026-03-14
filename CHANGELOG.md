@@ -25,6 +25,24 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-05 — CRUD-Routen Trip, Stage, Day
+
+**Erledigt:**
+- `routes/trips.ts`: GET/POST /trips, GET/PATCH/DELETE /trips/:id
+- `routes/stages.ts`: GET/POST /trips/:tripId/stages, GET/PATCH/DELETE /trips/:tripId/stages/:id
+- `routes/days.ts`: GET/POST /trips/:tripId/days (?stageId), GET/PATCH/DELETE /trips/:tripId/days/:id
+- Day-Detail inkludiert notes, locations, bookings, media (minimal), stage-Referenz
+- `lib/visibility.ts`: `visibilityFilter()` und `canView()` akzeptieren nun `undefined|null`
+- `index.ts`: neue Routen gemountet
+
+**Entscheidungen:**
+- Keine Service-Schicht — direkte Prisma-Queries in Routen
+- Ownership-Check für Stage/Day via `include: { trip: { select: { ownerId } } }` (kein N+1)
+- Stage-Zugehörigkeit zu Trip wird beim Day-Create/-Update validiert
+- Sortierung: Trips by createdAt desc, Stages by order asc, Days by date asc
+
+---
+
 ## [2026-03-14] AP-04 — Hono-Grundgerüst + Auth + Visibility
 
 **Erledigt:**

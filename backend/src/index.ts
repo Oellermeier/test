@@ -5,6 +5,9 @@ import { serve } from '@hono/node-server'
 import type { UserRole } from '@prisma/client'
 import { authenticate } from './middleware/auth.js'
 import { authRoutes } from './routes/auth.js'
+import { tripRoutes } from './routes/trips.js'
+import { stageRoutes } from './routes/stages.js'
+import { dayRoutes } from './routes/days.js'
 
 // Hono-Context-Typen — einmal definiert, überall verfügbar
 export type HonoEnv = {
@@ -33,8 +36,10 @@ app.use('*', authenticate)
 // ─── Routen ──────────────────────────────────────────────────────────────────
 
 app.route('/auth', authRoutes)
+app.route('/trips', tripRoutes)   // /trips, /trips/:id
+app.route('/trips', stageRoutes)  // /trips/:tripId/stages/*
+app.route('/trips', dayRoutes)    // /trips/:tripId/days/*
 
-// Platzhalter — AP-05 mountet hier: trips, stages, days, media, ...
 app.get('/', (c) => c.json({ status: 'ok', version: '0.1.0' }))
 
 // ─── Start ───────────────────────────────────────────────────────────────────
