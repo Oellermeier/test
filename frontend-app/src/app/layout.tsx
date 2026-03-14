@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import SwRegister from '@/components/SwRegister'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="bg-gray-50 text-gray-900 antialiased">
+        <SwRegister />
         {children}
       </body>
     </html>

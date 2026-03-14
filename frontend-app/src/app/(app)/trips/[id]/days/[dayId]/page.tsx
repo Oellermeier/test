@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ChevronLeft, MapPin, ExternalLink, FileText, CalendarDays } from 'lucide-react'
 import { serverFetch } from '@/lib/server-api'
 import { formatDate } from '@/lib/format'
+import VisibilityEditor from '@/components/days/VisibilityEditor'
 import type { DayDetail, DayStatus } from '@/types/api'
 
 const STATUS: Record<DayStatus, { label: string; cls: string }> = {
@@ -43,6 +44,7 @@ export default async function DayDetailPage({
             {day.stage && (
               <p className="text-sm text-gray-400 mt-1">Etappe: {day.stage.title}</p>
             )}
+            <VisibilityEditor dayId={day.id} initialVisibility={day.visibility} />
           </div>
           <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-medium mt-0.5 ${cls}`}>
             {label}

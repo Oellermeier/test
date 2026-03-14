@@ -25,6 +25,23 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-10 — Freigabe-Steuerung + PWA/Offline-Basis
+
+**Freigabe (Day Visibility):**
+- `components/days/VisibilityEditor.tsx`: Client Component — Chip zeigt aktuelle Visibility,
+  Tap öffnet Inline-Picker, PATCH /api/days/:id, router.refresh() nach Erfolg
+- `trips/[id]/days/[dayId]/page.tsx`: VisibilityEditor im Header-Bereich eingebunden
+
+**PWA/Offline:**
+- `public/sw.js`: Service Worker — Network First, besuchte Seiten gecacht, offline abrufbar;
+  API + Uploads explizit ausgenommen; alte Cache-Versionen werden bei Aktivierung bereinigt
+- `components/SwRegister.tsx`: Client Component — registriert SW nach Mount
+- `app/layout.tsx`: SwRegister eingebunden
+- `public/icons/icon.svg`: SVG-Platzhalter-Icon (blau, "R")
+- `public/manifest.json`: SVG-Icon als Fallback ergänzt
+
+---
+
 ## [2026-03-14] AP-09 — Upload-UI (Bild, PDF, GPX)
 
 **Neu:**

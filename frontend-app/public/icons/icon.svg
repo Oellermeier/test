@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Platzhalter-Icon. Durch echte PNG-Icons (192x192, 512x512) ersetzen. -->
+  <!-- Erstellen z.B. mit https://realfavicongenerator.net/ -->
+  <rect width="512" height="512" rx="96" fill="#2563eb"/>
+  <text x="256" y="340" font-size="260" text-anchor="middle"
+        fill="white" font-family="system-ui,sans-serif" font-weight="bold">R</text>
+</svg>
