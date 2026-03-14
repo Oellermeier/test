@@ -1,120 +1,153 @@
 # ADR-001: Tech-Stack-Entscheidung
 
 **Datum:** 2026-03-14
-**Status:** Entschieden
-**Autor:** Claude (Lead Engineer)
+**Status:** Entschieden (bestätigt nach Architekturvergleich)
+**Autor:** Claude (Lead Engineer) + Projektinhaber
 
 ---
 
 ## Kontext
 
-Wir benötigen einen Tech-Stack für:
-- Ein gemeinsames Backend (API + Auth + Datenhaltung)
-- Eine Reisenden-App (mobil-first, PWA, Offline)
-- Eine Zuschauer-Website (magazinartig, SEO-relevant)
+Persönliches Reisemanagementsystem mit zwei getrennten UX-Oberflächen:
+- **Reisenden-App** (Owner, mobil-first, PWA)
+- **Zuschauer-Website** (Familie/Öffentlichkeit, magazinartig)
 
-Anforderungen: wartbar, modern, kostenbewusst, gute mobile Unterstützung.
+Leitprinzipien: wartungsarm, geringe Infrastrukturkosten, wenige bewegliche Teile,
+klare Trennung der Verantwortlichkeiten, einfaches Deployment.
 
 ---
 
-## Entscheidungen
+## Entschiedener Stack
 
-### Backend: Next.js App Router (API Routes) + Prisma + PostgreSQL
+### Backend: Hono (Node.js)
 
 **Begründung:**
-- Next.js API Routes ermöglichen eine vollständige Backend-API ohne separaten Server
-- Prisma bietet typsichere, migrierbare ORM-Schicht
-- PostgreSQL ist robust, JSONB-fähig (für Metadaten), kostenlos selbst hostbar
-- Einheitliche Sprache (TypeScript) im gesamten Stack
+- Leichtgewichtig (~14 kB), TypeScript-nativ, kein Framework-Overhead
+- Klare Backend-Grenze: kein Verwischen von "ist das Frontend oder Backend?"
+- Middleware-System einfach und verständlich (Visibility-Check, Auth-Guard)
+- Portierbar und testbar unabhängig von Next.js
 
-**Alternativen:**
-- NestJS: mächtiger, aber deutlich mehr Overhead für diesen Scope
+**Alternativen verworfen:**
+- Next.js API Routes: gut, aber Backend und App-Frontend im gleichen Build → verwischte Grenzen
+- NestJS: mächtig, aber für persönliches Projekt überdimensioniert
 - Express: zu minimal, wenig Struktur
-- Supabase: komfortabel, aber Vendor-Lock-in und Kosten bei Wachstum
 
 **Risiken:**
-- Next.js API Routes sind nicht ideal für sehr große APIs (kein eingebautes DI)
-- Bei hoher Last müsste auf separaten Express/Hono-Server migriert werden
+- Kleinere Community als Express/NestJS, aber sehr aktiv und gut dokumentiert
 
 ---
 
-### Frontend-App: Next.js (PWA via next-pwa oder eigener Service Worker)
+### Datenbank: PostgreSQL + Prisma ORM
 
 **Begründung:**
-- Gleicher Stack wie Backend → Code-Sharing via `shared/`
-- PWA-Unterstützung mit next-pwa oder manuell implementierbar
-- App Router unterstützt offline-fähige Layouts
-- Gute Mobile-Performance mit Server Components + Client Components
+- PostgreSQL: robust, JSONB-fähig (für GPX-Metadaten, Buchungsinfos), kostenlos selbst hostbar
+- Prisma: typsichere Queries, migrations-fähig, hervorragendes DX
 
-**Alternativen:**
-- React Native: echte native App, aber massiv höherer Aufwand
-- Expo: interessant für echte App-Store-Distribution, aber überdimensioniert für MVP
-- SvelteKit: sehr schlank, aber kleineres Ökosystem
-
-**Risiken:**
-- PWA auf iOS (Safari) hat Einschränkungen (Push Notifications, Storage-Limits)
-- Offline-Strategie muss früh konkret geplant werden
+**Alternativen verworfen:**
+- SQLite: für MVP ausreichend, aber PostgreSQL ist bei gleichzeitigen Reads/Writes stabiler
+  und erleichtert spätere Erweiterungen (Volltextsuche, JSONB-Queries)
 
 ---
 
-### Frontend-Site: Next.js (separates Deployment)
+### Frontend App: Next.js 15 (App Router)
 
 **Begründung:**
-- Klare Trennung: zwei unabhängige Next.js-Apps
-- SSG/ISR für öffentliche Seiten → SEO + Performance
-- Gemeinsame Typen via `shared/`
+- App Router: Server Components reduzieren JS-Bundle für mobile Nutzung
+- PWA-Unterstützung via Service Worker
+- TypeScript durchgehend, gleiche Sprache wie Backend
 
-**Alternativen:**
-- Astro: sehr gut für Content-Seiten, aber weniger flexibel für dynamische Teile
-- Nuxt.js: Vue-basiert, andere Sprache als Rest des Stacks
+**Offline-Strategie (bewusst schlank):**
+- Service Worker cacht: zuletzt geladene Tagesinfos, Navigationsstruktur, bereits geladene Bilder
+- Kein vollständiger Offline-Sync, kein Background Sync im MVP
+- Ausbaufähig, aber nicht Priorität
 
 ---
 
-### Authentifizierung: NextAuth.js (Auth.js)
+### Frontend Site: Astro
 
 **Begründung:**
-- Bewährt, gut dokumentiert, unterstützt Credentials + OAuth
-- Integriert sich nahtlos in Next.js
-- JWT + HTTP-only Cookies
+- Perfekt für Content-Seiten: zero JS by default, extrem schnell
+- SSG für öffentliche Seiten (kein Server-Overhead), SSR für geschützte Bereiche
+- Astro Islands für dynamische Teile (Kommentare, Login)
+- Besseres SEO als Next.js für statische Inhalte
 
-**Alternativen:**
-- Clerk: sehr komfortabel, aber Kosten bei Wachstum
-- Custom JWT: mehr Kontrolle, aber mehr Wartungsaufwand
+**Alternativen verworfen:**
+- Next.js: möglich, aber für Content-lastige Website ist Astro die bessere Wahl
+- Hugo/Jekyll: kein dynamisches Login/Kommentar möglich
 
 ---
 
-### Medienspeicher: Lokal (MVP) → S3-kompatibel (später)
+### Authentifizierung: Hono + eigene JWT-Middleware
 
 **Begründung:**
-- MVP: lokaler Upload-Ordner, einfach und kostenfrei
-- Migration zu S3/Cloudflare R2 später ohne API-Änderung (Abstraktionsschicht)
+- Da Backend = Hono, kein NextAuth benötigt
+- JWT in HTTP-only Cookie (sicher gegen XSS)
+- Einfach, kontrollierbar, keine externe Abhängigkeit
+
+**Implementierung:**
+- Login-Endpoint im Hono-Backend
+- JWT-Middleware schützt alle privaten Routen
+- Beide Frontends nutzen dieselben Auth-Endpoints
 
 ---
 
-### Deployment: Docker Compose (VPS)
+### Medienstrategie: Lokal mit Abstraktionsschicht
+
+**Entscheidung:** Lokaler Upload-Ordner im MVP.
+
+**Abstraktionsschicht** von Anfang an:
+```typescript
+// storage/storage-provider.ts
+interface StorageProvider {
+  upload(file: Buffer, path: string, mimeType: string): Promise<string>
+  getUrl(path: string): string
+  delete(path: string): Promise<void>
+}
+
+// Konkrete Implementierungen:
+class LocalStorageProvider implements StorageProvider { ... }
+class R2StorageProvider implements StorageProvider { ... }  // später
+```
+
+Wechsel zu Cloudflare R2 (oder S3-kompatibel) später durch Tausch der
+Implementierung — API bleibt unverändert.
+
+**Vorteil:** 0€ Zusatzkosten im MVP, Migration ohne Backend-Änderungen.
+
+---
+
+### Hosting: Hetzner CX21 + Docker Compose
 
 **Begründung:**
-- Volle Kontrolle, keine Vendor-Abhängigkeit
-- Kostengünstig (1 VPS reicht für MVP)
-- Einfache lokale Entwicklung
+- ~6€/Monat für 4 GB RAM — ausreichend für alle 4 Container
+- Volle Kontrolle, kein Vendor-Lock-in
+- Docker Compose: einfaches lokales Development = Produktion
+- Backup via Hetzner-Snapshots (~1€/Monat)
 
-**Alternativen:**
-- Vercel: sehr komfortabel für Next.js, aber Kosten + kein persistenter Storage
-- Railway: komfortabel, moderate Kosten
+**Container-Setup:**
+```
+postgres      → Datenbank
+backend       → Hono API (Port 3000)
+frontend-app  → Next.js (Port 3001)
+frontend-site → Astro (Port 3002, statisch via nginx)
+nginx         → Reverse Proxy, SSL-Terminierung
+```
+
+**Laufende Kosten gesamt:** ~7–10 €/Monat
 
 ---
 
-## Zusammenfassung Stack
+## Zusammenfassung
 
-| Bereich | Technologie |
+| Schicht | Technologie |
 |---|---|
-| Sprache | TypeScript |
-| Backend | Next.js API Routes |
+| Sprache | TypeScript (durchgehend) |
+| Backend | Hono (Node.js) |
 | ORM | Prisma |
 | Datenbank | PostgreSQL |
-| Frontend App | Next.js + PWA |
-| Frontend Site | Next.js (SSG/ISR) |
-| Auth | NextAuth.js (Auth.js v5) |
-| Medienspeicher | Lokal → S3-kompatibel |
-| Deployment | Docker Compose / VPS |
-| Shared | TypeScript types |
+| Frontend App | Next.js 15 (App Router, PWA) |
+| Frontend Site | Astro (SSG/SSR) |
+| Auth | JWT + HTTP-only Cookie (Hono-Middleware) |
+| Medienspeicher | Lokal (Abstraktion für spätere Migration) |
+| Deployment | Docker Compose / Hetzner VPS |
+| Kosten MVP | ~7–10 €/Monat |

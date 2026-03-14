@@ -1,0 +1,252 @@
+// Prisma Schema — Travel Project
+// Datenbank: PostgreSQL
+// ORM: Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum Visibility {
+  PRIVATE          // nur Owner
+  FAMILY_CORE      // Owner + Kernfamilie
+  FAMILY_EXTENDED  // Owner + Kernfamilie + erweiterte Familie
+  PUBLIC           // alle
+}
+
+enum UserRole {
+  OWNER
+  FAMILY_CORE
+  FAMILY_EXTENDED
+  PUBLIC
+}
+
+enum MediaType {
+  IMAGE
+  PDF
+  GPX
+  VIDEO_REF   // nur externe URL, keine lokale Datei
+  DOCUMENT
+}
+
+enum BookingType {
+  FLIGHT
+  HOTEL
+  TRANSPORT
+  OTHER
+}
+
+// ─────────────────────────────────────────────
+// User
+// ─────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // bcrypt-Hash
+  name      String
+  role      UserRole @default(PUBLIC)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationen
+  trips    Trip[]
+  comments Comment[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// Trip (Reise)
+// ─────────────────────────────────────────────
+
+model Trip {
+  id          String     @id @default(cuid())
+  ownerId     String
+  title       String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  visibility  Visibility @default(PRIVATE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relationen
+  owner    User      @relation(fields: [ownerId], references: [id])
+  stages   Stage[]
+  days     Day[]
+  media    Media[]   @relation("TripMedia")
+  bookings Booking[] @relation("TripBookings")
+
+  @@map("trips")
+}
+
+// ─────────────────────────────────────────────
+// Stage (Etappe / Region)
+// ─────────────────────────────────────────────
+
+model Stage {
+  id          String     @id @default(cuid())
+  tripId      String
+  title       String
+  description String?
+  order       Int        @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  visibility  Visibility @default(PRIVATE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relationen
+  trip Trip  @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  days Day[]
+
+  @@map("stages")
+}
+
+// ─────────────────────────────────────────────
+// Day (Tag)
+// ─────────────────────────────────────────────
+
+model Day {
+  id         String     @id @default(cuid())
+  tripId     String
+  stageId    String?    // optional — Tag ohne Etappe erlaubt
+  date       DateTime   @db.Date
+  title      String?
+  summary    String?
+  visibility Visibility @default(PRIVATE)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  // Relationen
+  trip      Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  stage     Stage?    @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  notes     Note[]
+  media     Media[]   @relation("DayMedia")
+  locations Location[]
+  bookings  Booking[] @relation("DayBookings")
+  comments  Comment[]
+
+  // Ein Datum pro Reise eindeutig
+  @@unique([tripId, date])
+  @@map("days")
+}
+
+// ─────────────────────────────────────────────
+// Note (Tagesnotiz)
+// ─────────────────────────────────────────────
+
+model Note {
+  id         String     @id @default(cuid())
+  dayId      String
+  content    String
+  visibility Visibility @default(PRIVATE)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  @@map("notes")
+}
+
+// ─────────────────────────────────────────────
+// Media (Bild, PDF, GPX, Dokument, Video-Referenz)
+// ─────────────────────────────────────────────
+
+model Media {
+  id           String     @id @default(cuid())
+  type         MediaType
+  filename     String     // Originalname
+  storageKey   String     // interner Schlüssel / Pfad im Storage-System
+  storageUrl   String     // öffentlich aufrufbare URL (wird vom StorageProvider generiert)
+  thumbnailKey String?    // für Bilder: Thumbnail im Storage
+  thumbnailUrl String?
+  mimeType     String
+  size         Int?       // Bytes
+  order        Int        @default(0)
+  metadata     Json?      // EXIF, GPX-Punkte, etc.
+  visibility   Visibility @default(PRIVATE)
+  createdAt    DateTime   @default(now())
+
+  // Relationen — Media gehört entweder einem Day oder einem Trip (Cover etc.)
+  dayId  String?
+  tripId String?
+  day    Day?  @relation("DayMedia", fields: [dayId], references: [id], onDelete: Cascade)
+  trip   Trip? @relation("TripMedia", fields: [tripId], references: [id], onDelete: Cascade)
+
+  bookings Booking[] // Ticket-PDF etc.
+
+  @@map("media")
+}
+
+// ─────────────────────────────────────────────
+// Location (Ort / Maps-Link)
+// ─────────────────────────────────────────────
+
+model Location {
+  id         String     @id @default(cuid())
+  dayId      String
+  label      String
+  mapsUrl    String?
+  lat        Float?
+  lng        Float?
+  address    String?
+  visibility Visibility @default(PRIVATE)
+  createdAt  DateTime   @default(now())
+
+  day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  @@map("locations")
+}
+
+// ─────────────────────────────────────────────
+// Booking (Buchungsinfo / Ticket)
+// ─────────────────────────────────────────────
+
+model Booking {
+  id          String      @id @default(cuid())
+  tripId      String
+  dayId       String?     // optional — Buchung einem Tag zuordnen
+  title       String
+  type        BookingType @default(OTHER)
+  reference   String?     // Buchungsnummer, Bestätigung
+  bookingDate DateTime?
+  notes       String?
+  mediaId     String?     // z.B. Ticket-PDF
+  visibility  Visibility  @default(PRIVATE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  trip  Trip   @relation("TripBookings", fields: [tripId], references: [id], onDelete: Cascade)
+  day   Day?   @relation("DayBookings", fields: [dayId], references: [id], onDelete: SetNull)
+  media Media? @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@map("bookings")
+}
+
+// ─────────────────────────────────────────────
+// Comment (Kommentar von Zuschauern)
+// ─────────────────────────────────────────────
+
+model Comment {
+  id        String   @id @default(cuid())
+  dayId     String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  day    Day  @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
