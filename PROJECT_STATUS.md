@@ -18,7 +18,7 @@ Zuletzt aktualisiert: 2026-03-14
 | AP-06 | Backend: Upload-API (Bild, PDF, GPX) | ✅ Erledigt |
 | AP-07 | Frontend-App: Grundgerüst + Navigation | ✅ Erledigt |
 | AP-08 | Frontend-App: Reiseübersicht + Tagesansicht | ✅ Erledigt |
-| AP-09 | Frontend-App: Upload-Flows | 🔜 Offen |
+| AP-09 | Frontend-App: Upload-UI (Bild, PDF, GPX) | ✅ Erledigt |
 | AP-10 | Frontend-App: Freigabe-Steuerung + PWA/Offline | 🔜 Offen |
 | AP-11 | Frontend-Site: Grundgerüst + Reiseübersicht | 🔜 Offen |
 | AP-12 | Frontend-Site: Tagesdetail + Galerie + Kommentare | 🔜 Offen |
@@ -32,4 +32,4 @@ Zuletzt aktualisiert: 2026-03-14
 
 ## Nächster Schritt
 
-AP-09: Upload-UI in der Reisenden-App
+AP-10: Freigabe-Steuerung + PWA/Offline-Basis

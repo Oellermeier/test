@@ -25,6 +25,20 @@ Format: `[YYYY-MM-DD] AP-XX — Beschreibung`
 
 ---
 
+## [2026-03-14] AP-09 — Upload-UI (Bild, PDF, GPX)
+
+**Neu:**
+- `app/(app)/upload/page.tsx`: Server Component — Trips SSR, gibt an UploadForm weiter
+- `components/upload/UploadForm.tsx`: Client Component mit:
+  - Datei-Dropzone (tap-freundlich, zeigt Typ-Badge nach Auswahl)
+  - GPX-Erkennung primär per Extension (iOS-MIME-Varianz berücksichtigt)
+  - Trip-Select (SSR-Daten), Day-Select (client-seitig nachgeladen bei Trip-Änderung)
+  - Visibility-Picker als 2×2 Tap-Grid
+  - Feedback-Zustände: uploading, success (6s), error mit Meldung
+  - Formular-Reset nach Erfolg
+
+---
+
 ## [2026-03-14] AP-08 — Reiseübersicht + Tagesansicht
 
 **Neu (frontend-app/):**
